@@ -1,38 +1,23 @@
 package com.example.tablayoutviewpager.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.tablayoutviewpager.Adapter.SampleAdapter;
 import com.example.tablayoutviewpager.Model.Pictures;
 import com.example.tablayoutviewpager.databinding.FragmentPicturesBinding;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 
 public class PicturesFragment extends Fragment implements SampleAdapter.SaveCheckBoxStateListener{
 
-
-
-
-    private RecyclerView recyclerView;
     private SampleAdapter adapter;
 
     private static final String PREF_NAME = "checkbox_prefs";
