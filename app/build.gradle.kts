@@ -46,4 +46,8 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation ("com.github.MikeOrtiz:TouchImageView:1.4.1")
+
+    implementation ("com.github.chrisbanes:PhotoView:2.0.0")
 }

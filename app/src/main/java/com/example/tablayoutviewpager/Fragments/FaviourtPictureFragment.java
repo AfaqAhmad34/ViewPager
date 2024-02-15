@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import com.example.tablayoutviewpager.Adapter.SampleAdapter;
 import com.example.tablayoutviewpager.Model.Pictures;
 import com.example.tablayoutviewpager.databinding.FragmentFaviourtPictureBinding;
+import com.example.tablayoutviewpager.utlis.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class FaviourtPictureFragment extends Fragment implements SampleAdapter.S
     private List<Pictures> sharedDataList;
 
 
+    DataManager dataManager;
     public FaviourtPictureFragment() {
 
     }
@@ -43,31 +46,53 @@ public class FaviourtPictureFragment extends Fragment implements SampleAdapter.S
         binding = FragmentFaviourtPictureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+
+        dataManager = new DataManager(requireContext());
        binding.recyclerViewFavourite.setLayoutManager(new GridLayoutManager(requireContext(),2));
-       sharedDataList = getOriginalData();
+       sharedDataList =getOriginalData();
        List<Pictures> checkedItems = getCheckedItems();
-       checkedItemsAdapter = new SampleAdapter(checkedItems, this);
+       checkedItemsAdapter = new SampleAdapter (requireContext(),checkedItems,this,true);
        binding.recyclerViewFavourite.setAdapter(checkedItemsAdapter);
+       checkedItemsAdapter.notifyDataSetChanged();
        return view;
 
     }
-
     @Override
     public void onItemCheckedChanged(int position, boolean isChecked) {
-        Log.d("ItemChecked", "Position: " + position + ", isChecked: " + isChecked);
+//        Log.d("ItemChecked", "Position: " + position + ", isChecked: " + isChecked);
         saveCheckBoxState(sharedDataList.get(position).getId(), isChecked);
-        sharedDataList.get(position).setFavorite(isChecked);
-        checkedItemsAdapter.notifyItemChanged(position);
+        /*sharedDataList.get(position).setFavorite(isChecked);
+
+        // Post a Runnable to perform dataset modifications after a short delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isChecked) {
+                    checkedItemsAdapter.removeData(position);
+                }
+                checkedItemsAdapter.updateData(sharedDataList);
+                checkedItemsAdapter.notifyItemRemoved(position);
+            }
+        }, 100);*/
+//
+//        if (!isChecked){
+//            checkedItemsAdapter.removeData(position);
+//        }
+//
+//        checkedItemsAdapter.updateData(sharedDataList);
+//
+//        checkedItemsAdapter.notifyItemRemoved(position);
 
     }
 
     private void saveCheckBoxState(int itemId, boolean isChecked) {
-        SharedPreferences prefs = getContext().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        String key = KEY_CHECKBOX_STATE + itemId; // Use a unique key for each item
-        editor.putBoolean(key, isChecked);
-        editor.apply();
-        Log.d("Storage", "" + itemId);
+        dataManager.saveCheckBoxState(itemId,isChecked,requireContext());
+//        SharedPreferences prefs = getContext().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        String key = KEY_CHECKBOX_STATE + itemId;
+//        editor.putBoolean(key, isChecked);
+//        editor.apply();
+//        Log.d("Storage", "" + itemId);
 
     }
 
@@ -76,6 +101,7 @@ public class FaviourtPictureFragment extends Fragment implements SampleAdapter.S
 
         for (int i = 0; i < sharedDataList.size(); i++) {
             Pictures item = sharedDataList.get(i);
+
             boolean isChecked = getCheckBoxState(item.getId());
             Log.d("Checked", "Item Status " + isChecked + " for ID: " + item.getId());
             item.setFavorite(isChecked);
@@ -88,37 +114,46 @@ public class FaviourtPictureFragment extends Fragment implements SampleAdapter.S
     }
 
     private boolean getCheckBoxState(int itemId) {
-        SharedPreferences prefs = getContext().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        String key = KEY_CHECKBOX_STATE + itemId;
-        return prefs.getBoolean(key, false);
+
+        return dataManager.getCheckBoxState(itemId);
+//        SharedPreferences prefs = getContext().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+//        String key = KEY_CHECKBOX_STATE + itemId;
+//        return prefs.getBoolean(key, false);
     }
 
     private List<Pictures> getOriginalData() {
-
-        List<Pictures> dataList = new ArrayList<>();
-        dataList.add(new Pictures(0,"apple", "Apple", false));
-        dataList.add(new Pictures(1,"orange", "Orange", false));
-        dataList.add(new Pictures(2,"pineaplle", "PineApple", false));
-        dataList.add(new Pictures(3,"berry", "Berry", false));
-        dataList.add(new Pictures(4,"strawberry", "StrawBerry", false));
-        // Add more items as needed
-        return dataList;
+        return dataManager.getAllPictures();
     }
+
 
     @Override
     public void onSaveCheckBoxState(int position, boolean isChecked) {
-        saveCheckBoxState(position, isChecked);
+        //dataManager.saveCheckBoxState(position,isChecked,requireContext());
+        saveCheckBoxState(position,isChecked);
+       // sharedDataList.get(position).setFavorite(isChecked);
+        // Post a Runnable to perform dataset modifications after a short delay
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isChecked) {
+                    checkedItemsAdapter.removeData(position);
+                }
+               // checkedItemsAdapter.updateData(sharedDataList);
+                checkedItemsAdapter.notifyItemRemoved(position);
+            }
+        }, 100);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        getCheckedItems();
         binding.recyclerViewFavourite.setLayoutManager(new GridLayoutManager(requireContext(),2));
         sharedDataList = getOriginalData();
         List<Pictures> checkedItems = getCheckedItems();
-        checkedItemsAdapter = new SampleAdapter(checkedItems, this);
+        checkedItemsAdapter = new SampleAdapter(requireContext(),checkedItems, this,true);
         binding.recyclerViewFavourite.setAdapter(checkedItemsAdapter);
+        checkedItemsAdapter.notifyDataSetChanged();
 
     }
 }
