@@ -106,6 +106,7 @@ public class SampleAdapter extends RecyclerView.Adapter<SampleAdapter.ViewHolder
 //            notifyDataSetChanged();
 //        }
 //    }
+   @SuppressLint("NotifyDataSetChanged")
    public void removeData(int itemId) {
        for (int i = 0; i < dataList.size(); i++) {
            if (dataList.get(i).getId() == itemId) {

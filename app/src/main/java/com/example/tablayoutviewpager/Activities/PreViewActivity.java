@@ -98,6 +98,7 @@ public class PreViewActivity extends AppCompatActivity {
 
         viewPager2.setAdapter(new SwiperAdapter(this, list));
         viewPager2.setCurrentItem(position);
+        setSupportActionBar(binding.topAppBar);
         if (getSupportActionBar() != null && list != null && !list.isEmpty()) {
             getSupportActionBar().setTitle(list.get(position).getName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

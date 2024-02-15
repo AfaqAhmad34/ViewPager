@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -43,22 +45,20 @@ public class MainActivity extends AppCompatActivity {
     FaviourtPictureFragment faviourtPictureFragment;
 
     public ActionBarDrawerToggle actionBarDrawerToggle;
+
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Wallpapers");
-            actionBar.setDisplayShowTitleEnabled(true);
-        }
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.myDrawerLayout, R.string.nav_open, R.string.nav_close);
+        toolbar = findViewById(R.id.topAppBar);
+        setSupportActionBar(toolbar);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.myDrawerLayout, toolbar,R.string.nav_open, R.string.nav_close);
         binding.myDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        actionBarDrawerToggle.getDrawerArrowDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.ADD);
         binding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -167,9 +167,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void openShareList() {
-        String appPackageName ="com.android.chrome";
+        String appPackageName =getPackageName();
         String playStoreLink = "https://play.google.com/store/apps/details?id=" + appPackageName;
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,  playStoreLink);

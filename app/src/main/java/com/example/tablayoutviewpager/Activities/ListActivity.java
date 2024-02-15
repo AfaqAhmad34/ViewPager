@@ -3,6 +3,7 @@ package com.example.tablayoutviewpager.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -30,6 +31,8 @@ public class ListActivity extends AppCompatActivity implements SampleAdapter.Sav
 
     DataManager dataManager;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +46,17 @@ public class ListActivity extends AppCompatActivity implements SampleAdapter.Sav
         dataManager = new DataManager(this);
         catId = getIntent().getIntExtra("catId",0);
         String name = getIntent().getStringExtra("catName");
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(name);
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+//
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setTitle(name);
+//            actionBar.setDisplayShowTitleEnabled(true);
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
+        setSupportActionBar(binding.topAppBar);
+        getSupportActionBar().setTitle(name);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
        dataManager.initPictures();
         dataList = dataManager.getPicturesByCategory(catId);
